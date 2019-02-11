@@ -52,6 +52,7 @@ function createEnumInput(parentNode, param, getter, options) {
             return option;
         });
         Object.defineProperty(getter, name, {
+            enumerable: true,
             get () {
                 return select.value;
             }
@@ -70,6 +71,7 @@ function createEnumInput(parentNode, param, getter, options) {
         return radio;
     });
     Object.defineProperty(getter, name, {
+        enumerable: true,
         get () {
             return radioButtons.find(radio => radio.checked).value;
         }
@@ -82,6 +84,7 @@ function createStringInput(parentNode, param, getter, options = {}) {
     }
     const input = createInput(parentNode, param, options);
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             return input.value;
         }
@@ -92,6 +95,7 @@ function createNumberInput(parentNode, param, getter, options = {}) {
     const input = createInput(parentNode, param, options);
     input.type = 'number';
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             return Number(input.value);
         }
@@ -102,6 +106,7 @@ function createBooleanInput(parentNode, param, getter, options = {}) {
     const input = createInput(parentNode, param, options);
     input.type = 'checkbox';
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             return input.checked;
         }
@@ -113,6 +118,7 @@ function createDateInput(parentNode, param, getter, options = {}) {
     input.type = 'date';
     const { dateFormater } = options;
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             if (dateFormater) {
                 return dateFormater(input.value);
@@ -127,6 +133,7 @@ function createDateTimeInput(parentNode, param, getter, options = {}) {
     input.type = 'date';
     const { dateTimeFormater } = options;
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             if (dateTimeFormater) {
                 return dateTimeFormater(input.value);
@@ -140,6 +147,7 @@ function createPasswordInput(parentNode, param, getter, options = {}) {
     const input = createInput(parentNode, param, options);
     input.type = 'password';
     Object.defineProperty(getter, param.name, {
+        enumerable: true,
         get () {
             return input.value;
         }
@@ -154,7 +162,6 @@ function createObjectInput(parentNode, param, getter, options = {}) {
     const object = {};
     getter[name] = object;
     options.prefix = `${options.prefix || ''}${name}.`;
-    createLabel(parentNode, param, options);
     for (const [name, property] of Object.entries(properties)) {
         createChild(parentNode, 'BR');  
         createParamInput(parentNode, { name, ...property }, object, options);
@@ -169,7 +176,6 @@ function createArrayInput(parentNode, param, getter, options = {}) {
     const array = [];
     getter[name] = array;
     options.prefix = `${options.prefix || ''}${name}.`;
-    createLabel(parentNode, param, options);
     for (let index = 0; index < 3; index += 1) {
         createChild(parentNode, 'BR');  
         createParamInput(parentNode, { name: index, ...items }, array, options);
