@@ -21,26 +21,33 @@ function getApiByTag(tag) {
 function createCommand(api, method, path, details) {
     const command = createChild(api, 'FIELDSET');
     const legend = createChild(command, 'LEGEND');
-    legend.innerText = `${method.toUpperCase()} ${path}`;
+    const commandTitle = `${method.toUpperCase()} ${path}`;
+    command.id = commandTitle;
+    legend.append(commandTitle);
     const p = createChild(command, 'P');
-    p.innerText = details.summary;
+    p.append(details.summary);
     const params = {};
-    details.parameters.forEach(param => {
+    (details.parameters || []).forEach((param) => {
         createParamInput(command, param, params, OPTIONS)
         createChild(command, 'BR');
     });
     const button = createChild(command, 'BUTTON');
-    button.innerText = 'Submit';
+    button.append('Submit');
+    button.addEventListener('click', () => alert(`${commandTitle} 
+
+${JSON.stringify(params, null, '  ')}
+`));
 }
 
 async function start() {
     const swagger = await (await fetch(SWAGGER_URL)).json();
     // For YAML version, you can use https://github.com/jeremyfa/yaml.js
+    // const yaml = await (await fetch(SWAGGER_URL)).text();
     // const swagger = YAML.parse(yaml);
     const { title, version } = swagger.info;
     const h1 = createChild(document.body, 'H1');
     h1.innerText = `${title} (${version})`;
-    OPTIONS.definitions = swagger.definitions;
+    OPTIONS.swagger = swagger;
     for (const [path, methods] of Object.entries(swagger.paths)) {
         for (const [method, details] of Object.entries(methods)) {
             const api = getApiByTag(details.tags[0]);
